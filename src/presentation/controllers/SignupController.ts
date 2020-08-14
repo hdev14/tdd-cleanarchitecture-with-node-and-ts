@@ -1,25 +1,33 @@
+import { badRequest } from '../helpers/http'
 import { HttpRequest, HttpResponse } from '../protocols/types/http'
 import IController from '../protocols/interfaces/IController'
 import IEmailValidator from '../protocols/interfaces/IEmailValidator'
 import MissingParamError from '../errors/MissingParamError'
 import InvalidParamError from '../errors/InvalidParamError'
-import { badRequest } from '../helpers/http'
+import ServerError from '../errors/ServerError'
 
 export default class SignupController implements IController {
   constructor (private readonly emailValidator: IEmailValidator) {}
 
   public handle (httpRequest: HttpRequest): HttpResponse {
-    const requiredFields = ['name', 'email', 'password', 'password_confirm']
+    try {
+      const requiredFields = ['name', 'email', 'password', 'password_confirm']
 
-    for (const field of requiredFields) {
-      if (!httpRequest.body[field]) {
-        return badRequest(new MissingParamError(field))
+      for (const field of requiredFields) {
+        if (!httpRequest.body[field]) {
+          return badRequest(new MissingParamError(field))
+        }
       }
-    }
 
-    const emailIsValid = this.emailValidator.isValid(httpRequest.body.email)
-    if (!emailIsValid) {
-      return badRequest(new InvalidParamError('email'))
+      const emailIsValid = this.emailValidator.isValid(httpRequest.body.email)
+      if (!emailIsValid) {
+        return badRequest(new InvalidParamError('email'))
+      }
+    } catch (err) {
+      return {
+        status_code: 500,
+        body: new ServerError()
+      }
     }
   }
 }
