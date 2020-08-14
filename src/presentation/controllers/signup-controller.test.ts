@@ -1,6 +1,7 @@
 import SignupController from './SignupController'
 import MissingParamError from '../errors/MissingParamError'
 import InvalidParamError from '../errors/InvalidParamError'
+import ServerError from '../errors/ServerError'
 import EmailValidator from '../utils/EmailValidator'
 
 jest.mock('../utils/EmailValidator')
@@ -103,5 +104,25 @@ describe('SignUp Controller', () => {
 
     signupController.handle(httpRequest)
     expect(mockedEmailValidator.isValid).toHaveBeenCalledWith(httpRequest.body.email)
+  })
+
+  it('should return 500 if EmailValidator.isValid throws an error', () => {
+    mockedEmailValidator.isValid.mockImplementationOnce(jest.fn(() => {
+      throw new Error('Test error')
+    }))
+
+    const signupController = makeSignupController()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'invalid@mail.com',
+        password: 'any_password',
+        password_confirm: 'any_password'
+      }
+    }
+
+    const httpResponse = signupController.handle(httpRequest)
+    expect(httpResponse.status_code).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
