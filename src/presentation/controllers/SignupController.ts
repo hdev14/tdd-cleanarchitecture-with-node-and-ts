@@ -1,9 +1,10 @@
 import { HttpRequest, HttpResponse } from '../protocols/types/http'
 import IController from '../protocols/interfaces/IController'
 import IEmailValidator from '../protocols/interfaces/IEmailValidator'
+
 import MissingParamError from '../errors/MissingParamError'
 import InvalidParamError from '../errors/InvalidParamError'
-import ServerError from '../errors/ServerError'
+
 import { badRequest, internalError } from '../helpers/http'
 
 export default class SignupController implements IController {

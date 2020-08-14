@@ -1,7 +1,9 @@
 import SignupController from './SignupController'
+
 import MissingParamError from '../errors/MissingParamError'
 import InvalidParamError from '../errors/InvalidParamError'
 import ServerError from '../errors/ServerError'
+
 import EmailValidator from '../utils/EmailValidator'
 
 jest.mock('../utils/EmailValidator')
