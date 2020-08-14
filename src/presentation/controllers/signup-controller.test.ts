@@ -89,4 +89,19 @@ describe('SignUp Controller', () => {
     expect(httpResponse.status_code).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('email'))
   })
+
+  it('should call EmailValidor.isValid with correct email', () => {
+    const signupController = makeSignupController()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'invalid@mail.com',
+        password: 'any_password',
+        password_confirm: 'any_password'
+      }
+    }
+
+    signupController.handle(httpRequest)
+    expect(mockedEmailValidator.isValid).toHaveBeenCalledWith(httpRequest.body.email)
+  })
 })
