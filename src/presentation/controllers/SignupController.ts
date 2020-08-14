@@ -1,10 +1,10 @@
-import { badRequest } from '../helpers/http'
 import { HttpRequest, HttpResponse } from '../protocols/types/http'
 import IController from '../protocols/interfaces/IController'
 import IEmailValidator from '../protocols/interfaces/IEmailValidator'
 import MissingParamError from '../errors/MissingParamError'
 import InvalidParamError from '../errors/InvalidParamError'
 import ServerError from '../errors/ServerError'
+import { badRequest, internalError } from '../helpers/http'
 
 export default class SignupController implements IController {
   constructor (private readonly emailValidator: IEmailValidator) {}
@@ -24,10 +24,7 @@ export default class SignupController implements IController {
         return badRequest(new InvalidParamError('email'))
       }
     } catch (err) {
-      return {
-        status_code: 500,
-        body: new ServerError()
-      }
+      return internalError()
     }
   }
 }
