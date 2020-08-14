@@ -1,14 +1,20 @@
 import SignupController from './SignupController'
 import MissingParamError from '../errors/MissingParamError'
+import InvalidParamError from '../errors/InvalidParamError'
+import EmailValidator from '../utils/EmailValidator'
 
-const makeSignUpController = () => {
-  const signupController = new SignupController()
+jest.mock('../utils/EmailValidator')
+
+const mockedEmailValidator = new EmailValidator() as jest.Mocked<EmailValidator>
+
+const makeSignupController = () => {
+  const signupController = new SignupController(mockedEmailValidator)
   return signupController
 }
 
 describe('SignUp Controller', () => {
   it('should return 400 if no name is provided', () => {
-    const signupController = makeSignUpController()
+    const signupController = makeSignupController()
     const httpRequest = {
       body: {
         email: 'any@mail.com',
@@ -23,7 +29,7 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 400 if no email is provided', () => {
-    const signupController = makeSignUpController()
+    const signupController = makeSignupController()
     const httpRequest = {
       body: {
         name: 'any_name',
@@ -38,7 +44,7 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 400 if no password is provided', () => {
-    const signupController = makeSignUpController()
+    const signupController = makeSignupController()
     const httpRequest = {
       body: {
         name: 'any_name',
@@ -53,7 +59,7 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 400 if no password_confirm is provided', () => {
-    const signupController = makeSignUpController()
+    const signupController = makeSignupController()
     const httpRequest = {
       body: {
         name: 'any_name',
@@ -65,5 +71,22 @@ describe('SignUp Controller', () => {
     const httpResponse = signupController.handle(httpRequest)
     expect(httpResponse.status_code).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('password_confirm'))
+  })
+
+  it('should return 400 if an invalid email is provided', () => {
+    mockedEmailValidator.isValid.mockReturnValue(false)
+    const signupController = makeSignupController()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'invalid@mail.com',
+        password: 'any_password',
+        password_confirm: 'any_password'
+      }
+    }
+
+    const httpResponse = signupController.handle(httpRequest)
+    expect(httpResponse.status_code).toBe(400)
+    expect(httpResponse.body).toEqual(new InvalidParamError('email'))
   })
 })
