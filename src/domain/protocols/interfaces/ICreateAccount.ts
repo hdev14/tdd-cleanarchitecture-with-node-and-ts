@@ -1,5 +1,5 @@
 import { AccountData, AccountModel } from '../types/account'
 
 export default interface ICreateAccount {
-  create (account: AccountData): AccountModel
+  create (account: AccountData): Promise<AccountModel>
 }
