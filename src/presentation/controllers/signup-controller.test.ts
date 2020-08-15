@@ -76,6 +76,22 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new MissingParamError('password_confirm'))
   })
 
+  it('should return 400 if password and password_confirn are not equal', () => {
+    const signupController = makeSignupController()
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any@mail.com',
+        password: 'any_password',
+        password_confirm: 'invalid_password'
+      }
+    }
+
+    const httpResponse = signupController.handle(httpRequest)
+    expect(httpResponse.status_code).toBe(400)
+    expect(httpResponse.body).toEqual(new InvalidParamError('password_confirm'))
+  })
+
   it('should return 400 if an invalid email is provided', () => {
     mockedEmailValidator.isValid.mockReturnValue(false)
     const signupController = makeSignupController()
