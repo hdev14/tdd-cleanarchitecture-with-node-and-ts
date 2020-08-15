@@ -12,16 +12,16 @@ class EmailValidatorMock implements IEmailValidator {
   }
 }
 
-const emailValidatorMock = new EmailValidatorMock()
-
-const makeSignupController = () => {
-  const signupController = new SignupController(emailValidatorMock)
-  return signupController
-}
-
 describe('SignUp Controller', () => {
+  let signupController: SignupController
+  let emailValidatorMock: EmailValidatorMock
+
+  beforeEach(() => {
+    emailValidatorMock = new EmailValidatorMock()
+    signupController = new SignupController(emailValidatorMock)
+  })
+
   it('should return 400 if no name is provided', () => {
-    const signupController = makeSignupController()
     const httpRequest = {
       body: {
         email: 'any@mail.com',
@@ -36,7 +36,6 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 400 if no email is provided', () => {
-    const signupController = makeSignupController()
     const httpRequest = {
       body: {
         name: 'any_name',
@@ -51,7 +50,6 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 400 if no password is provided', () => {
-    const signupController = makeSignupController()
     const httpRequest = {
       body: {
         name: 'any_name',
@@ -66,7 +64,6 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 400 if no password_confirm is provided', () => {
-    const signupController = makeSignupController()
     const httpRequest = {
       body: {
         name: 'any_name',
@@ -81,7 +78,6 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 400 if password and password_confirn are not equal', () => {
-    const signupController = makeSignupController()
     const httpRequest = {
       body: {
         name: 'any_name',
@@ -97,8 +93,8 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 400 if an invalid email is provided', () => {
-    jest.spyOn(emailValidatorMock, 'isValid').mockReturnValue(false)
-    const signupController = makeSignupController()
+    jest.spyOn(emailValidatorMock, 'isValid').mockReturnValueOnce(false)
+
     const httpRequest = {
       body: {
         name: 'any_name',
@@ -114,7 +110,8 @@ describe('SignUp Controller', () => {
   })
 
   it('should call EmailValidor.isValid with correct email', () => {
-    const signupController = makeSignupController()
+    const isValidSpy = jest.spyOn(emailValidatorMock, 'isValid')
+
     const httpRequest = {
       body: {
         name: 'any_name',
@@ -125,7 +122,7 @@ describe('SignUp Controller', () => {
     }
 
     signupController.handle(httpRequest)
-    expect(emailValidatorMock.isValid).toHaveBeenCalledWith(httpRequest.body.email)
+    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.email)
   })
 
   it('should return 500 if EmailValidator.isValid throws an error', () => {
@@ -133,7 +130,6 @@ describe('SignUp Controller', () => {
       throw new Error()
     })
 
-    const signupController = makeSignupController()
     const httpRequest = {
       body: {
         name: 'any_name',
