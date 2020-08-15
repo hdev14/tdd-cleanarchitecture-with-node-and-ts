@@ -37,7 +37,7 @@ export default class SignupController implements IController {
 
       const account = this.createAccount.create({ name, email, password })
       return {
-        status_code: 200,
+        status_code: 201,
         body: account
       }
     } catch (err) {
