@@ -1,6 +1,7 @@
 import { HttpRequest, HttpResponse } from '../protocols/types/http'
 import IController from '../protocols/interfaces/IController'
 import IEmailValidator from '../protocols/interfaces/IEmailValidator'
+import ICreateAccount from '../../domain/protocols/interfaces/ICreateAccount'
 
 import MissingParamError from '../errors/MissingParamError'
 import InvalidParamError from '../errors/InvalidParamError'
@@ -8,7 +9,10 @@ import InvalidParamError from '../errors/InvalidParamError'
 import { badRequest, internalError } from '../helpers/http'
 
 export default class SignupController implements IController {
-  constructor (private readonly emailValidator: IEmailValidator) {}
+  constructor (
+    private readonly emailValidator: IEmailValidator,
+    private readonly createAccount: ICreateAccount
+  ) {}
 
   public handle (httpRequest: HttpRequest): HttpResponse {
     try {
@@ -20,7 +24,7 @@ export default class SignupController implements IController {
         }
       }
 
-      const { email, password, password_confirm } = httpRequest.body
+      const { name, email, password, password_confirm } = httpRequest.body
 
       if (password !== password_confirm) {
         return badRequest(new InvalidParamError('password_confirm'))
@@ -30,6 +34,8 @@ export default class SignupController implements IController {
       if (!emailIsValid) {
         return badRequest(new InvalidParamError('email'))
       }
+
+      this.createAccount.create({ name, email, password })
     } catch (err) {
       return internalError()
     }
