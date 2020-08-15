@@ -4,14 +4,18 @@ import MissingParamError from '../errors/MissingParamError'
 import InvalidParamError from '../errors/InvalidParamError'
 import ServerError from '../errors/ServerError'
 
-import EmailValidator from '../mocks/EmailValidator'
+import IEmailValidator from '../protocols/interfaces/IEmailValidator'
 
-jest.mock('../mocks/EmailValidator')
+class EmailValidatorMock implements IEmailValidator {
+  isValid (email: string): boolean {
+    return true
+  }
+}
 
-const mockedEmailValidator = new EmailValidator() as jest.Mocked<EmailValidator>
+const emailValidatorMock = new EmailValidatorMock()
 
 const makeSignupController = () => {
-  const signupController = new SignupController(mockedEmailValidator)
+  const signupController = new SignupController(emailValidatorMock)
   return signupController
 }
 
@@ -93,7 +97,7 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 400 if an invalid email is provided', () => {
-    mockedEmailValidator.isValid.mockReturnValue(false)
+    jest.spyOn(emailValidatorMock, 'isValid').mockReturnValue(false)
     const signupController = makeSignupController()
     const httpRequest = {
       body: {
@@ -121,11 +125,11 @@ describe('SignUp Controller', () => {
     }
 
     signupController.handle(httpRequest)
-    expect(mockedEmailValidator.isValid).toHaveBeenCalledWith(httpRequest.body.email)
+    expect(emailValidatorMock.isValid).toHaveBeenCalledWith(httpRequest.body.email)
   })
 
   it('should return 500 if EmailValidator.isValid throws an error', () => {
-    mockedEmailValidator.isValid.mockImplementationOnce(() => {
+    jest.spyOn(emailValidatorMock, 'isValid').mockImplementationOnce(() => {
       throw new Error()
     })
 
