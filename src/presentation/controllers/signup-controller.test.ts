@@ -4,11 +4,11 @@ import MissingParamError from '../errors/MissingParamError'
 import InvalidParamError from '../errors/InvalidParamError'
 import ServerError from '../errors/ServerError'
 
-import EmailValidator from '../utils/EmailValidator'
+import EmailValidatorMock from '../mocks/EmailValidatorMock'
 
-jest.mock('../utils/EmailValidator')
+jest.mock('../mocks/EmailValidatorMock')
 
-const mockedEmailValidator = new EmailValidator() as jest.Mocked<EmailValidator>
+const mockedEmailValidator = new EmailValidatorMock() as jest.Mocked<EmailValidatorMock>
 
 const makeSignupController = () => {
   const signupController = new SignupController(mockedEmailValidator)
