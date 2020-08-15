@@ -180,9 +180,7 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 500 if CreateAccount.create throws an error', async () => {
-    jest.spyOn(createAccountMock, 'create').mockImplementationOnce(() => {
-      throw new Error()
-    })
+    jest.spyOn(createAccountMock, 'create').mockRejectedValueOnce(new Error())
 
     const httpRequest = {
       body: {
