@@ -109,9 +109,9 @@ describe('SignUp Controller', () => {
   })
 
   it('should return 500 if EmailValidator.isValid throws an error', () => {
-    mockedEmailValidator.isValid.mockImplementationOnce(jest.fn(() => {
-      throw new Error('Test error')
-    }))
+    mockedEmailValidator.isValid.mockImplementationOnce(() => {
+      throw new Error()
+    })
 
     const signupController = makeSignupController()
     const httpRequest = {
