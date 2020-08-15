@@ -6,7 +6,7 @@ import ICreateAccount from '../../domain/protocols/interfaces/ICreateAccount'
 import MissingParamError from '../errors/MissingParamError'
 import InvalidParamError from '../errors/InvalidParamError'
 
-import { badRequest, internalError } from '../helpers/http'
+import { badRequest, internalError, created } from '../helpers/http'
 
 export default class SignupController implements IController {
   constructor (
@@ -36,10 +36,7 @@ export default class SignupController implements IController {
       }
 
       const account = this.createAccount.create({ name, email, password })
-      return {
-        status_code: 201,
-        body: account
-      }
+      return created(account)
     } catch (err) {
       return internalError()
     }
