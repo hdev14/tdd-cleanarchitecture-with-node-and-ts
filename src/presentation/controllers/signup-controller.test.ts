@@ -5,6 +5,9 @@ import InvalidParamError from '../errors/InvalidParamError'
 import ServerError from '../errors/ServerError'
 
 import IEmailValidator from '../protocols/interfaces/IEmailValidator'
+import ICreateAccount from '../../domain/protocols/interfaces/ICreateAccount'
+
+import { AccountData, AccountModel } from '../../domain/protocols/types/account'
 
 class EmailValidatorMock implements IEmailValidator {
   isValid (email: string): boolean {
@@ -12,13 +15,26 @@ class EmailValidatorMock implements IEmailValidator {
   }
 }
 
+class CreateAccountMock implements ICreateAccount {
+  create (account: AccountData): AccountModel {
+    return {
+      id: 'valid_id',
+      name: 'valid_name',
+      email: 'valid@mail.com',
+      password: 'valid_password'
+    }
+  }
+}
+
 describe('SignUp Controller', () => {
   let signupController: SignupController
   let emailValidatorMock: EmailValidatorMock
+  let createAccountMock: CreateAccountMock
 
   beforeEach(() => {
     emailValidatorMock = new EmailValidatorMock()
-    signupController = new SignupController(emailValidatorMock)
+    createAccountMock = new CreateAccountMock()
+    signupController = new SignupController(emailValidatorMock, createAccountMock)
   })
 
   it('should return 400 if no name is provided', () => {
@@ -142,5 +158,24 @@ describe('SignUp Controller', () => {
     const httpResponse = signupController.handle(httpRequest)
     expect(httpResponse.status_code).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+
+  it('should call CreateAccount with correct data', () => {
+    const createSpy = jest.spyOn(createAccountMock, 'create')
+
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any@mail.com',
+        password: 'any_password',
+        password_confirm: 'any_password'
+      }
+    }
+    signupController.handle(httpRequest)
+    expect(createSpy).toHaveBeenCalledWith({
+      name: 'any_name',
+      email: 'any@mail.com',
+      password: 'any_password'
+    })
   })
 })
