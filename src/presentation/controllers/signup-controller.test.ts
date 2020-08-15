@@ -160,7 +160,7 @@ describe('SignUp Controller', () => {
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  it('should call CreateAccount with correct data', () => {
+  it('should call CreateAccount.create with correct data', () => {
     const createSpy = jest.spyOn(createAccountMock, 'create')
 
     const httpRequest = {
