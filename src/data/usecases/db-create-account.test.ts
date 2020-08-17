@@ -67,4 +67,15 @@ describe('Unit Tests for DbCreateAccount class', () => {
       password: 'hashed'
     })
   })
+
+  it('should throw an error if AccountRepository.create throws an error', async () => {
+    jest.spyOn(accountRepositoryMock, 'create').mockRejectedValueOnce(new Error())
+    const accountData = {
+      name: 'valid_name',
+      email: 'valid@mail.com',
+      password: 'valid_password'
+    }
+
+    await expect(dbCreateAccount.create(accountData)).rejects.toThrow()
+  })
 })
