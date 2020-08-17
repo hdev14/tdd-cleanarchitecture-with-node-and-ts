@@ -8,9 +8,15 @@ class EncrypterMock implements IEncrypter {
 }
 
 describe('Unit Tests for DbCreateAccount class', () => {
+  let dbCreateAccount: DbCreateAccount
+  let encrypterMock: EncrypterMock
+
+  beforeEach(() => {
+    encrypterMock = new EncrypterMock()
+    dbCreateAccount = new DbCreateAccount(encrypterMock)
+  })
+
   it('should call Encrypter.encrypt with correct value', async () => {
-    const encrypterMock = new EncrypterMock()
-    const dbCreateAccount = new DbCreateAccount(encrypterMock)
     const encryptSpy = jest.spyOn(encrypterMock, 'encrypt')
     const accountData = {
       name: 'valid_name',
@@ -22,8 +28,6 @@ describe('Unit Tests for DbCreateAccount class', () => {
   })
 
   it('should throw an error if Encrypter.encrypt throws an error', async () => {
-    const encrypterMock = new EncrypterMock()
-    const dbCreateAccount = new DbCreateAccount(encrypterMock)
     jest.spyOn(encrypterMock, 'encrypt').mockRejectedValueOnce(new Error())
     const accountData = {
       name: 'valid_name',
