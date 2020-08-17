@@ -15,6 +15,6 @@ export default class DbCreateAccount implements ICreateAccount {
       ...accountData,
       password: hashedPassword
     })
-    return null
+    return account
   }
 }
