@@ -26,7 +26,7 @@ class CreateAccountMock implements ICreateAccount {
   }
 }
 
-describe('SignUp Controller', () => {
+describe('Unit Tests for SignUpController class', () => {
   let signupController: SignupController
   let emailValidatorMock: EmailValidatorMock
   let createAccountMock: CreateAccountMock

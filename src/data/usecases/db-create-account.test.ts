@@ -7,7 +7,7 @@ class EncrypterMock implements IEncrypter {
   }
 }
 
-describe('DbCreateAccount UseCase', () => {
+describe('Unit Tests for DbCreateAccount class', () => {
   it('should call Encrypter with correct value', async () => {
     const encrypterMock = new EncrypterMock()
     const dbCreateAccount = new DbCreateAccount(encrypterMock)

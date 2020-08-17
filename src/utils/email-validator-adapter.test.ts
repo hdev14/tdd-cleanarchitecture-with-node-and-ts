@@ -7,7 +7,7 @@ jest.mock('validator', () => ({
   }
 }))
 
-describe('EmailValidator Adapter', () => {
+describe('Unit Tests for EmailValidatorAdapter class', () => {
   let emailValidatorAdapter: EmailValidatorAdapter
 
   beforeEach(() => {
