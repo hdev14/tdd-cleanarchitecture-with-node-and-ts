@@ -6,7 +6,7 @@ export default class DbCreateAccount implements ICreateAccount {
   constructor (private readonly encrypter: IEncrypter) {}
 
   async create (accountData: AccountData): Promise<AccountModel> {
-    this.encrypter.encrypt(accountData.password)
-    return Promise.resolve(null)
+    await this.encrypter.encrypt(accountData.password)
+    return null
   }
 }
