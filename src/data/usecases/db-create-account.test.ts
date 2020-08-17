@@ -78,4 +78,18 @@ describe('Unit Tests for DbCreateAccount class', () => {
 
     await expect(dbCreateAccount.create(accountData)).rejects.toThrow()
   })
+
+  it('should return an account on success', async () => {
+    const accountData = {
+      name: 'valid_name',
+      email: 'valid@mail.com',
+      password: 'valid_password'
+    }
+    const account = await dbCreateAccount.create(accountData)
+    expect(account).toEqual({
+      id: 'valid_id',
+      ...accountData,
+      password: 'hashed'
+    })
+  })
 })
