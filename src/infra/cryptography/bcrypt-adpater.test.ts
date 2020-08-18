@@ -24,4 +24,9 @@ describe('Unit Tests for BCryptAdapter class', () => {
     const hashedValue = await bcryptAdapter.encrypt('any_value')
     expect(hashedValue).toBe('hashed_value')
   })
+
+  it('should throw an error if brcrypt.hash throws an error', async () => {
+    jest.spyOn(bcrypt, 'hash').mockRejectedValueOnce(new Error())
+    await expect(bcryptAdapter.encrypt('any_value')).rejects.toThrow()
+  })
 })
