@@ -8,16 +8,16 @@ jest.mock('bcrypt', () => ({
 }))
 describe('Unit Tests for BCryptAdapter class', () => {
   let bcryptAdapter: BCryptAdapter
+  const salt = 12
 
   beforeEach(() => {
-    const salt = 12
     bcryptAdapter = new BCryptAdapter(salt)
   })
 
   it('should call bcrypt.hash with correct value', async () => {
     const hashSpy = jest.spyOn(bcrypt, 'hash')
     await bcryptAdapter.encrypt('any_value')
-    expect(hashSpy).toHaveBeenCalledWith('any_value', 12)
+    expect(hashSpy).toHaveBeenCalledWith('any_value', salt)
   })
 
   it('should return a hash on success', async () => {
