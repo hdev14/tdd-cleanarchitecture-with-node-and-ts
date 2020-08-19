@@ -5,10 +5,7 @@ import { AccountData, AccountModel } from '../../../../domain/protocols/types/ac
 export default class AccountRepository implements IAccountRepository {
   async create (accountData: AccountData): Promise<AccountModel> {
     const accountCollection = Mongo.getCollection('accounts')
-    const account = (await accountCollection.insertOne(accountData)).ops[0]
-    return {
-      ...account,
-      id: account._id
-    }
+    const { _id: id, ...rest } = (await accountCollection.insertOne(accountData)).ops[0]
+    return { id, ...rest }
   }
 }
